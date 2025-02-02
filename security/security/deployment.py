@@ -1,6 +1,7 @@
 import os
 from .settings import *
 from .settings import BASE_DIR
+import dj_database_url
 
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
 CSRF_TRUSTED_ORIGINS = ['HTTPS://'+os.environ['WEBSITE_HOSTNAME']]
@@ -37,18 +38,11 @@ STORAGES = {
 }
 
 
-CONNECTION = os.environ['AZURE_POSTGRESQL_CONNECTION_STRING']
-CONNECTION_STR = {pair.split('=')[0]: pair.split('=')[1] for pair in CONNECTION.split(' ')}
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': CONNECTION_STR['dbname'], 
-        'HOST': CONNECTION_STR['host'], 
-        'USER': CONNECTION_STR['user'],
-        'PASSWORD': CONNECTION_STR['password'],
-        
-    }
+    'default': dj_database_url.config(
+        default=os.environ["DATABASE_URL"],
+        conn_max_age=600
+    )
 }
 
 STATIC_ROOT =  BASE_DIR / 'staticfiles'
